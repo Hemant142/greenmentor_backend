@@ -27,6 +27,24 @@ taskRoutes.get("/get/:id",async(req,res)=>{
     res.status(200).send(task)
 })
 
+// Update Task Status Route
+taskRoutes.patch("/update/status/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const task = await TaskModel.findOne({ _id: id, userId: req.body.userId });
+        if (!task) {
+            return res.status(404).send({ message: "Task not found" });
+        }
+        task.status = !task.status;
+        await task.save();
+        res.status(200).send({ message: "Task status toggled successfully", task });
+    } catch (err) {
+        res.status(400).send({ error: err.message });
+    }
+});
+
+
 taskRoutes.patch("/update/:id", async (req, res) => {
     const { id } = req.params;
 
